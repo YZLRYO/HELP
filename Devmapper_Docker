@@ -1,0 +1,15 @@
+Issue: 
+    devmapper: Thin Pool has 107394 free data blocks which is less than minimum required 163840 free data blocks.
+
+Solution:
+http://stackoverflow.com/questions/36918387/space-issue-on-docker-devmapper-and-centos7
+
+1.Cleanup exited processes:
+docker rm $(docker ps -q -f status=exited)
+
+2.Cleanup dangling volumes:
+docker volume rm $(docker volume ls -qf dangling=true)
+
+3.Cleanup dangling images:
+docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
+
