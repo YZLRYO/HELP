@@ -1,0 +1,21 @@
+#Install docker
+
+wget -qO- https://get.docker.com/ > install.sh
+chmod +x install.sh
+./install.sh
+
+#Setup remote API
+Be careful with the target Linux distribution version. Check docker doc for configure dockerd options. AFAIK, Ubuntu 14.04 uses upstart as init system while 16.04 uses systemd. Different init system may has different configuration file for docker.
+For upstart, edit /etc/default/docker(ubuntu), /etc/sysconfig/docker(centos)
+
+DOCKER_OPTS='-H tcp://0.0.0.0:4243 -H unix:///var/run/docker.sock --insecure-registry 10.239.45.219:15000'
+
+For systemd, create and edit /lib/systemd/system/docker.service.d/private-registry.conf(ubuntu), /etc/systemd/system/docker.service.d/private-registry.conf(CentOS)
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:4243 -H unix:///var/run/docker.sock --insecure-registry 10.239.45.219:15000
+systemctl daemon-reload
+Restart docker
+# service docker restart
+# ps aux | grep dockerd | grep -v grep
+root       7327  2.1  0.0 1304408 43724 ?       Ssl  11:18   0:00 /usr/bin/dockerd -H tcp://0.0.0.0:4243 -H unix:///var/run/docker.sock --insecure-registry 10.239.45.219:15000
